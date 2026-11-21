@@ -1,0 +1,163 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Gibran Flow · del pedido al diff aprobado",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "docs/diagrama/gibran-flow.html",
+    "repository": {
+      "url": "https://github.com/Gibrantrm/Gibran-Hermes-Flow.git",
+      "revision": "b705aa7d5d83cbccff9c5ef3f3f889d0a1fe7b5d",
+      "provider": "github",
+      "link_mode": "web"
+    }
+  },
+  "lanes": [
+    {"id": "definir", "label": "Definir · orquestador y usuario"},
+    {"id": "rutas", "label": "Rutas especiales y preparación", "variant": "exception"},
+    {"id": "ejecutar", "label": "Ejecutar y verificar · de derecha a izquierda"},
+    {"id": "entregar", "label": "Memoria y entrega"}
+  ],
+  "mainPath": ["entrada", "explorar", "riesgo", "entrevista", "plan", "control1", "tarjetas", "gateway"],
+  "nodes": [
+    {
+      "id": "entrada", "lane": "definir", "col": 0, "type": "frontend",
+      "label": "dev-flow", "sublabel": "petición · modo · riesgo",
+      "sources": [{"path": "skills/gibran-flow/dev-flow/SKILL.md", "line": 13, "end_line": 28}]
+    },
+    {
+      "id": "explorar", "lane": "definir", "col": 1, "type": "backend",
+      "label": "Explorador", "sublabel": "hechos con fuentes",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 13, "end_line": 27}, {"path": "skills/gibran-flow/modo-bug/SKILL.md", "line": 18, "end_line": 27}]
+    },
+    {
+      "id": "riesgo", "lane": "definir", "col": 2, "type": "security",
+      "label": "BAJO o ALTO", "sublabel": "reclasificar: solo sube",
+      "sources": [{"path": "skills/gibran-flow/dev-flow/references/riesgo.md", "line": 1, "end_line": 58}]
+    },
+    {
+      "id": "entrevista", "lane": "definir", "col": 3, "type": "external",
+      "label": "Entrevista", "sublabel": "si hay decisiones abiertas", "icon": "person",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 32, "end_line": 40}]
+    },
+    {
+      "id": "plan", "lane": "definir", "col": 4, "type": "backend",
+      "label": "Plan y criterios", "sublabel": "pruebas y alcance",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 38, "end_line": 48}]
+    },
+    {
+      "id": "control1", "lane": "definir", "col": 5, "type": "security",
+      "label": "Control 1", "sublabel": "ALTO: aprobación explícita", "tag": "BAJO: plan breve",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 45, "end_line": 50}]
+    },
+    {
+      "id": "nuevo", "lane": "rutas", "col": 0, "type": "security",
+      "label": "PRD y base", "sublabel": "Control 0: apruebas PRD", "tag": "nuevo: siempre ALTO",
+      "sources": [{"path": "skills/gibran-flow/modo-nuevo/SKILL.md", "line": 13, "end_line": 27}]
+    },
+    {
+      "id": "diagnostico", "lane": "rutas", "col": 1, "type": "backend",
+      "label": "Diagnóstico", "sublabel": "causa y comando rojo",
+      "sources": [{"path": "skills/gibran-flow/modo-bug/SKILL.md", "line": 29, "end_line": 75}]
+    },
+    {
+      "id": "bloqueo", "lane": "rutas", "col": 3, "type": "security",
+      "label": "Bloqueo", "sublabel": "decisión: vuelve al usuario", "icon": "waiting",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 81, "end_line": 97}, {"path": "souls/revisor.md", "line": 16, "end_line": 18}]
+    },
+    {
+      "id": "tarjetas", "lane": "rutas", "col": 5, "type": "messagebus",
+      "label": "Worktree y tarjetas", "sublabel": "kanban_create · parents",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 50, "end_line": 67}]
+    },
+    {
+      "id": "gateway", "lane": "ejecutar", "col": 5, "type": "messagebus",
+      "label": "Gateway running", "sublabel": "despacha los workers",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 68, "end_line": 80}]
+    },
+    {
+      "id": "implementar", "lane": "ejecutar", "col": 4, "type": "backend",
+      "label": "Implementador", "sublabel": "TDD y autorrevisión",
+      "sources": [{"path": "skills/gibran-flow/agente-implementador/SKILL.md", "line": 35, "end_line": 56}, {"path": "skills/gibran-flow/agente-implementador/SKILL.md", "line": 115, "end_line": 128}, {"path": "hooks/guardia_kanban.py", "line": 15, "end_line": 26}]
+    },
+    {
+      "id": "qa", "lane": "ejecutar", "col": 3, "type": "security",
+      "label": "QA primero", "sublabel": "perfil revisor ejecuta",
+      "sources": [{"path": "skills/gibran-flow/agente-qa/SKILL.md", "line": 30, "end_line": 67}]
+    },
+    {
+      "id": "revisar", "lane": "ejecutar", "col": 2, "type": "security",
+      "label": "Revisión", "sublabel": "código y E2E aplicables",
+      "sources": [{"path": "skills/gibran-flow/agente-revisor/SKILL.md", "line": 186, "end_line": 193}, {"path": "skills/gibran-flow/agente-revisor/SKILL.md", "line": 119, "end_line": 138}]
+    },
+    {
+      "id": "verificar", "lane": "ejecutar", "col": 1, "type": "backend",
+      "label": "Orquestador verifica", "sublabel": "evidencia · tests · diff",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 98, "end_line": 104}, {"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 127, "end_line": 144}]
+    },
+    {
+      "id": "pendientes", "lane": "ejecutar", "col": 0, "type": "backend",
+      "label": "Pendientes", "sublabel": "verificables al explorador",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 105, "end_line": 115}, {"path": "scripts/app_local.py", "line": 191, "end_line": 219}]
+    },
+    {
+      "id": "escriba", "lane": "entregar", "col": 0, "type": "backend",
+      "label": "Escriba", "sublabel": "notas y .hermes.md",
+      "sources": [{"path": "skills/gibran-flow/agente-escriba/SKILL.md", "line": 12, "end_line": 46}, {"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 116, "end_line": 120}]
+    },
+    {
+      "id": "cierre", "lane": "entregar", "col": 1, "type": "backend",
+      "label": "cierre.py", "sublabel": "tarjetas · costos · apps",
+      "sources": [{"path": "scripts/cierre.py", "line": 86, "end_line": 119}]
+    },
+    {
+      "id": "controlfinal", "lane": "entregar", "col": 2, "type": "security",
+      "label": "Control final", "sublabel": "tú apruebas la entrega", "icon": "person",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/references/control-final.md", "line": 15, "end_line": 35}]
+    },
+    {
+      "id": "integrar", "lane": "entregar", "col": 3, "type": "backend",
+      "label": "integrar.py", "sublabel": "staged, sin commit",
+      "sources": [{"path": "scripts/integrar.py", "line": 61, "end_line": 93}, {"path": "skills/gibran-flow/modo-feature/SKILL.md", "line": 121, "end_line": 125}]
+    },
+    {
+      "id": "usuario", "lane": "entregar", "col": 4, "type": "external",
+      "label": "Usuario", "sublabel": "revisa diff y hace commit", "icon": "person",
+      "sources": [{"path": "skills/gibran-flow/modo-feature/references/control-final.md", "line": 15, "end_line": 21}]
+    }
+  ],
+  "edges": [
+    {"id": "entrada-explorar", "from": "entrada", "to": "explorar", "label": "feature / bug"},
+    {"id": "entrada-nuevo", "from": "entrada", "to": "nuevo", "label": "nuevo", "role": "branch"},
+    {"id": "nuevo-riesgo", "from": "nuevo", "to": "riesgo", "label": "base acordada", "role": "branch"},
+    {"id": "explorar-riesgo", "from": "explorar", "to": "riesgo", "label": "feature"},
+    {"id": "explorar-bug", "from": "explorar", "to": "diagnostico", "label": "bug", "role": "branch"},
+    {"id": "bug-riesgo", "from": "diagnostico", "to": "riesgo", "role": "return"},
+    {"id": "riesgo-entrevista", "from": "riesgo", "to": "entrevista"},
+    {"id": "entrevista-plan", "from": "entrevista", "to": "plan"},
+    {"id": "plan-control", "from": "plan", "to": "control1"},
+    {"id": "control-tarjetas", "from": "control1", "to": "tarjetas", "variant": "security"},
+    {"id": "tarjetas-gateway", "from": "tarjetas", "to": "gateway"},
+    {"id": "gateway-implementar", "from": "gateway", "to": "implementar"},
+    {"id": "implementar-qa", "from": "implementar", "to": "qa", "label": "pide revisión"},
+    {"id": "qa-revisar", "from": "qa", "to": "revisar", "label": "pasa"},
+    {"id": "revision-cambios", "from": "revisar", "to": "implementar", "label": "pide cambios", "role": "return", "variant": "security", "fromSide": "bottom", "toSide": "bottom"},
+    {"id": "revision-bloqueo", "from": "revisar", "to": "bloqueo", "label": "bloquea", "role": "error", "variant": "security"},
+    {"id": "qa-cambios", "from": "qa", "to": "implementar", "label": "falla QA", "role": "return", "variant": "security", "fromSide": "top", "toSide": "top"},
+    {"id": "revision-verificar", "from": "revisar", "to": "verificar", "label": "todas done"},
+    {"id": "verificar-pendientes", "from": "verificar", "to": "pendientes"},
+    {"id": "pendientes-escriba", "from": "pendientes", "to": "escriba"},
+    {"id": "escriba-cierre", "from": "escriba", "to": "cierre"},
+    {"id": "cierre-controlfinal", "from": "cierre", "to": "controlfinal"},
+    {"id": "controlfinal-integrar", "from": "controlfinal", "to": "integrar", "label": "aprobado", "variant": "security"},
+    {"id": "integrar-usuario", "from": "integrar", "to": "usuario"}
+  ],
+  "cards": [
+    {"dot": "cyan", "title": "Tres entradas, un motor común", "items": ["Feature: exploración. Bug: diagnóstico con evidencia; si la causa es por lectura, el implementador debe producir el rojo.", "Nuevo: producto prepara PRD, tú apruebas Control 0 y eliges base/stack. Si hay referencia, se explora; después se planea solo un walking skeleton."]},
+    {"dot": "amber", "title": "Decisiones, no automatismos", "items": ["ALTO: razonamiento high para plan y aprobación explícita en Control 1; BAJO: plan breve y continúa. Sin test siempre lo decide el usuario.", "Ante un bloqueo, el orquestador verifica hechos; cambios de alcance, permisos y decisiones aprobadas regresan al usuario. Sin aprobación final no se integra."]},
+    {"dot": "emerald", "title": "Revisión independiente", "items": ["Implementador: Copilot Haiku. Revisor: Copilot GPT; QA y revisión son fases del mismo perfil, no dos workers.", "Hasta tres rondas de cambios por tarjeta; después bloquea. Hallazgos posteriores de la tarea crean tarjetas de corrección, con revisión otra vez."]},
+    {"dot": "rose", "title": "Límites reales", "items": ["Gateway detenido: no hay despacho; el no administrado puede parar tras inactividad. Las tarjetas no lo despiertan.", "app_local.py: iniciar/detener con --tarea; sin registro solo reporta PID/puerto, no mata ni borra. Guardias parciales, no sandbox.", "Pruebas y permisos de BD se acuerdan explícitamente; restricciones en una tarjeta no impiden por sí solas una suite completa."]},
+    {"dot": "violet", "title": "Cerrar sin ocultar pendientes", "items": ["Verificables al explorador; lo que necesita permisos no disponibles se declara con razón. Escriba conserva hechos y distingue supuestos.", "cierre.py lee Kanban y escribe métricas locales; costos son equivalentes, no factura. Integrar deja staged, elimina worktree/rama y no hace commit."]}
+  ]
+}

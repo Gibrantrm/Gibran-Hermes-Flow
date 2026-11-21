@@ -11,6 +11,20 @@ hooks y perfiles deben existir en tu versión: esto no promete compatibilidad co
 cualquier versión anterior o futura. La distribución pública conserva la lógica
 actual del flujo, con ejemplos y material operativo sanitizados.
 
+## Diagrama del flujo
+
+[![Gibran Flow: del pedido al diff aprobado](docs/diagrama/gibran-flow.png)](docs/diagrama/gibran-flow.svg)
+
+[Abrir imagen SVG](docs/diagrama/gibran-flow.svg) ·
+[HTML interactivo autocontenido](docs/diagrama/gibran-flow.html) ·
+[JSON editable](docs/diagrama/candidate.json) ·
+[Cómo abrirlo y reproducirlo](docs/diagrama/README.md)
+
+La imagen se muestra directamente en GitHub. El README **no ejecuta JavaScript**
+ni incrusta el visor con un iframe. Para interactuar, descarga el HTML y ábrelo
+en tu navegador. También se incluye publicación estática mediante GitHub Pages,
+acotada al diagrama; su disponibilidad se documenta en la guía del diagrama.
+
 ## Recorrido rápido
 
 1. Pides un cambio al orquestador: `dev-flow` identifica **feature, bug o nuevo**.

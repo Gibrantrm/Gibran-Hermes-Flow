@@ -14,5 +14,8 @@ local/*
 *.bak
 docs/diagrama/*.delivery.json
 docs/diagrama/*.finalize-summary.json
+docs/diagrama/*.finalize.json
 docs/diagrama/*.browser-check*
+docs/diagrama/.archify-*.json
 docs/diagrama/review-*/
+.site/

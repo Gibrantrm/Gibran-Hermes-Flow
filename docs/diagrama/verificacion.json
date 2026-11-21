@@ -1,0 +1,31 @@
+{
+  "descripcion": "Resumen portable, no sidecar de procedencia estricta de Archify",
+  "fecha": "2026-11-21",
+  "archify": "3.1.0",
+  "node": "22.23.2",
+  "repository": "https://github.com/Gibrantrm/Gibran-Hermes-Flow.git",
+  "revision_fuente": "b705aa7d5d83cbccff9c5ef3f3f889d0a1fe7b5d",
+  "candidate": {
+    "path": "docs/diagrama/candidate.json",
+    "sha256": "63b01d68718641592f9f13d6c23dbeead5fdd4bc3b4d8e80fe5505b8f61b3b1e"
+  },
+  "html": {
+    "path": "docs/diagrama/gibran-flow.html",
+    "sha256": "8c931ad0ebcf35e9f5d0c95999ea95c2b2968fbca98ea33688742243b32ed36f"
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "exportaciones": ["gibran-flow.svg", "gibran-flow.png"],
+  "revision_visual": "PNG canónico inspeccionado; no se ejecutó visual-check",
+  "pruebas": {
+    "comando": "python -B tests/run_app_local.py",
+    "casos": 12,
+    "resultado": "OK",
+    "limite": "Conexión Kanban simulada como tablero vacío; sin BD real"
+  }
+}

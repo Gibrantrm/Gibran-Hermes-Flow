@@ -1,0 +1,5 @@
+# Preserve canonical Archify bytes and their verified hashes.
+docs/diagrama/gibran-flow.html -text whitespace=-blank-at-eol linguist-generated=true
+docs/diagrama/gibran-flow.svg -text whitespace=-blank-at-eol linguist-generated=true
+docs/diagrama/gibran-flow.png binary
+docs/diagrama/candidate.json text eol=lf

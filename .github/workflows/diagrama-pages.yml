@@ -1,0 +1,48 @@
+name: Publicar diagrama en Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/diagrama/**
+      - .github/workflows/diagrama-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  diagrama:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Preparar solo archivos publicables del diagrama
+        shell: bash
+        run: |
+          mkdir .site
+          cp docs/diagrama/gibran-flow.html .site/index.html
+          for file in gibran-flow.html gibran-flow.svg gibran-flow.png candidate.json verificacion.json ARCHIFY-LICENSE.txt JetBrainsMono-OFL.txt; do
+            cp "docs/diagrama/$file" ".site/$file"
+          done
+          touch .site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .site
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4
