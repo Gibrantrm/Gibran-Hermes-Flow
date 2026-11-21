@@ -1,6 +1,6 @@
 # Alcance de esta publicación
 
-## Estado: código publicado; Pages pendiente
+## Estado: código y Pages publicados
 
 El repositorio de destino autorizado es
 https://github.com/Gibrantrm/Gibran-Hermes-Flow.git y estaba público y vacío.
@@ -11,20 +11,27 @@ la imagen PNG enlazada desde el README. Las fuentes del diagrama fijadas al
 commit `b705aa7d5d83cbccff9c5ef3f3f889d0a1fe7b5d` ya están disponibles en GitHub.
 No se extrajeron tokens ni se modificó la configuración global de Git.
 
-**El sitio Pages todavía no se desplegó.** El
+**Sitio verificado:** https://gibrantrm.github.io/Gibran-Hermes-Flow/
+
+El [run 44943338017](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44943338017)
+desplegó correctamente el commit `4d9271784d973770e886511be34fd56809608fe4`.
+Se abrió el visor en navegador y se verificó HTTP 200 e igualdad byte por byte
+del HTML, SVG, PNG y JSON servidos con los artefactos aprobados.
+
+El
 [primer workflow](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44936048690)
 falló al intentar crear el sitio:
 `Create Pages site failed. Error: Resource not accessible by integration`.
-El token limitado de Actions no pudo habilitarlo; no se amplían permisos ni se
-cambia la visibilidad del repositorio para rodearlo.
+El propietario habilitó Pages. Después se reprodujo un fallo de descubrimiento:
+el upload terminaba correctamente, pero deploy-pages encontraba cero artefactos
+al continuar inmediatamente en el mismo job. Separar preparación y despliegue
+con `needs: preparar` resolvió ese fallo en la ejecución verificada, sin nuevas
+dependencias ni permisos. La causa interna del servicio no se infiere de los logs;
+la evidencia y los intentos están en la [guía del diagrama](docs/diagrama/README.md).
 
-Paso mínimo del propietario:
-1. Abrir **Settings → Pages → Build and deployment → Source → GitHub Actions**.
-2. En **Actions → Publicar diagrama en Pages**, usar **Run workflow** sobre `main`.
-3. Comprobar que el despliegue termine correctamente y abrir la URL que publique.
-
-Mientras tanto, el README renderiza el PNG y permite abrir el SVG o descargar el
-HTML autocontenido. No se anuncia una URL Pages como operativa.
+El README renderiza el PNG y enlaza al visor vivo; SVG y HTML descargable siguen
+disponibles para uso local. El código del flujo y los bytes del diagrama no
+cambiaron durante la corrección del despliegue.
 
 ## Qué contiene
 

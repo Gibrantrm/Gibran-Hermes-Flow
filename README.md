@@ -11,25 +11,24 @@ hooks y perfiles deben existir en tu versión: esto no promete compatibilidad co
 cualquier versión anterior o futura. La distribución pública conserva la lógica
 actual del flujo, con ejemplos y material operativo sanitizados.
 
-> **Estado de esta entrega:** código y documentación publicados; imagen del
-> diagrama verificada en GitHub. **Pages pendiente:** GitHub rechazó la creación
-> del sitio con el token de Actions. El propietario debe habilitar
-> **Settings → Pages → Source → GitHub Actions** y ejecutar el workflow.
-> El HTML descargable ya funciona localmente. [Detalles](PUBLICACION.md).
+> **Publicado y verificado:** [abre el diagrama interactivo en GitHub Pages](https://gibrantrm.github.io/Gibran-Hermes-Flow/).
+> El README muestra una imagen; al pulsarla se abre el visor completo.
+> [Detalles de publicación](PUBLICACION.md).
 
 ## Diagrama del flujo
 
-[![Gibran Flow: del pedido al diff aprobado](docs/diagrama/gibran-flow.png)](docs/diagrama/gibran-flow.svg)
+[![Gibran Flow: del pedido al diff aprobado](docs/diagrama/gibran-flow.png)](https://gibrantrm.github.io/Gibran-Hermes-Flow/)
 
+[Abrir visor interactivo](https://gibrantrm.github.io/Gibran-Hermes-Flow/) ·
 [Abrir imagen SVG](docs/diagrama/gibran-flow.svg) ·
 [HTML interactivo autocontenido](docs/diagrama/gibran-flow.html) ·
 [JSON editable](docs/diagrama/candidate.json) ·
 [Cómo abrirlo y reproducirlo](docs/diagrama/README.md)
 
 La imagen se muestra directamente en GitHub. El README **no ejecuta JavaScript**
-ni incrusta el visor con un iframe. Para interactuar, descarga el HTML y ábrelo
-en tu navegador. También se incluye publicación estática mediante GitHub Pages,
-acotada al diagrama; su disponibilidad se documenta en la guía del diagrama.
+ni incrusta el visor con un iframe. Para interactuar, abre el enlace de Pages
+o descarga el HTML y ábrelo en tu navegador. Pages publica únicamente los
+artefactos del diagrama, no el árbol completo del repositorio.
 
 ## Recorrido rápido
 

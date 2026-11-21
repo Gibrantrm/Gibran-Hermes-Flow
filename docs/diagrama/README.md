@@ -1,5 +1,6 @@
 # Diagrama Archify
 
+- [Visor interactivo en GitHub Pages](https://gibrantrm.github.io/Gibran-Hermes-Flow/), publicado y verificado.
 - [Vista estática PNG](gibran-flow.png), visible en el README de GitHub.
 - [Vector SVG](gibran-flow.svg), exportación canónica con tema automático.
 - [HTML interactivo](gibran-flow.html): descarga el archivo mediante **Download raw
@@ -16,9 +17,9 @@ El diagrama no sustituye la configuración del runtime ni garantiza aislamiento.
 ## GitHub y Pages
 
 **Estado de entrega:** código, HTML, JSON y previews publicados en GitHub.
-Las fuentes enlazadas al commit fijado ya están disponibles. Pages ya fue
-habilitado por el propietario; el despliegue está en verificación.
-Hasta que haya una URL comprobada, descarga el HTML.
+Las fuentes enlazadas al commit fijado ya están disponibles. Pages fue
+habilitado por el propietario y el sitio está operativo:
+https://gibrantrm.github.io/Gibran-Hermes-Flow/
 
 GitHub muestra imágenes SVG/PNG en Markdown, pero no ejecuta el JavaScript de
 Archify dentro del README. El archivo HTML en la vista de código tampoco es
@@ -32,7 +33,7 @@ No ejecuta el flujo, no arranca apps y no accede a bases de datos.
 Si GitHub no permite habilitar Pages con `GITHUB_TOKEN`, el propietario debe ir a
 **Settings → Pages → Build and deployment → Source → GitHub Actions** y ejecutar
 el workflow. No cambies la visibilidad de un repo privado para resolverlo.
-Mientras no haya un despliegue verificado, usa el HTML descargado.
+Si un despliegue posterior falla, el HTML descargado sigue siendo una alternativa.
 
 ### Diagnóstico del primer reintento
 
@@ -46,7 +47,7 @@ artefacto, no expirado.
 No faltaba el upload ni había diferencia de nombre/ruta. La inconsistencia
 observada está en el descubrimiento del artefacto; su causa interna en GitHub
 no se puede determinar solo con estos logs. El warning de `punycode` no fue
-el error que detuvo el despliegue. Se verifica una ejecución nueva desde `main`
+el error que detuvo el despliegue. Se verificó una ejecución nueva desde `main`
 sin cambiar versiones, permisos, bytes del diagrama ni pasos del workflow.
 
 La ejecución nueva `44943224309` reprodujo el mismo fallo: upload finalizado
@@ -56,6 +57,13 @@ Se separan ahora preparación y despliegue con `needs: preparar`, como recomiend
 el despliegue comienza después de finalizar correctamente el job que subió el
 artefacto. Se conserva la lista de archivos, nombres y versiones de actions;
 no se añaden permisos, esperas fijas ni reintentos que oculten fallos.
+
+**Resultado:** el [run 44943338017](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44943338017)
+con commit `4d9271784d973770e886511be34fd56809608fe4` terminó en **success**.
+`preparar` finalizó antes de arrancar `desplegar`; este encontró un artefacto
+(`14722028389`) y publicó el sitio. HTML, SVG, PNG y JSON respondieron HTTP 200 y
+sus bytes coinciden con los aprobados. El visor también se abrió en navegador.
+El aviso de `punycode` permaneció sin impedir el despliegue.
 
 Documentación oficial:
 - [Qué es GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
