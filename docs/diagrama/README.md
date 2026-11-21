@@ -16,12 +16,9 @@ El diagrama no sustituye la configuración del runtime ni garantiza aislamiento.
 ## GitHub y Pages
 
 **Estado de entrega:** código, HTML, JSON y previews publicados en GitHub.
-Las fuentes enlazadas al commit fijado ya están disponibles. **Pages pendiente:**
-el [workflow inicial](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44936048690)
-falló con `Resource not accessible by integration` al crear el sitio.
-No hay una URL Pages verificada. El propietario debe seleccionar
-**Settings → Pages → Build and deployment → Source → GitHub Actions**
-y ejecutar de nuevo el workflow desde Actions. Hasta entonces, descarga el HTML.
+Las fuentes enlazadas al commit fijado ya están disponibles. Pages ya fue
+habilitado por el propietario; el despliegue está en verificación.
+Hasta que haya una URL comprobada, descarga el HTML.
 
 GitHub muestra imágenes SVG/PNG en Markdown, pero no ejecuta el JavaScript de
 Archify dentro del README. El archivo HTML en la vista de código tampoco es
@@ -36,6 +33,21 @@ Si GitHub no permite habilitar Pages con `GITHUB_TOKEN`, el propietario debe ir 
 **Settings → Pages → Build and deployment → Source → GitHub Actions** y ejecutar
 el workflow. No cambies la visibilidad de un repo privado para resolverlo.
 Mientras no haya un despliegue verificado, usa el HTML descargado.
+
+### Diagnóstico del primer reintento
+
+El intento 2 del [run 44936048690](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44936048690)
+usó el commit `af2862b`. Configurar Pages, preparar archivos y subir el artefacto
+terminaron correctamente. El upload finalizó `github-pages` con ID `14721949488`
+a las 19:49:15.880 UTC; a las 19:49:16.249 UTC el descubrimiento de deploy-pages
+devolvió cero artefactos. Posteriormente la API del mismo run sí listó ese
+artefacto, no expirado.
+
+No faltaba el upload ni había diferencia de nombre/ruta. La inconsistencia
+observada está en el descubrimiento del artefacto; su causa interna en GitHub
+no se puede determinar solo con estos logs. El warning de `punycode` no fue
+el error que detuvo el despliegue. Se verifica una ejecución nueva desde `main`
+sin cambiar versiones, permisos, bytes del diagrama ni pasos del workflow.
 
 Documentación oficial:
 - [Qué es GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
