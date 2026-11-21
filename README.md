@@ -11,9 +11,11 @@ hooks y perfiles deben existir en tu versión: esto no promete compatibilidad co
 cualquier versión anterior o futura. La distribución pública conserva la lógica
 actual del flujo, con ejemplos y material operativo sanitizados.
 
-> **Estado de esta entrega:** copia preparada y verificada, pero el push quedó
-> bloqueado por falta de autenticación Git no interactiva. No se ha desplegado
-> Pages. Detalles y cómo continuar en [PUBLICACION.md](PUBLICACION.md).
+> **Estado de esta entrega:** código y documentación publicados; imagen del
+> diagrama verificada en GitHub. **Pages pendiente:** GitHub rechazó la creación
+> del sitio con el token de Actions. El propietario debe habilitar
+> **Settings → Pages → Source → GitHub Actions** y ejecutar el workflow.
+> El HTML descargable ya funciona localmente. [Detalles](PUBLICACION.md).
 
 ## Diagrama del flujo
 

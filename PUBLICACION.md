@@ -1,21 +1,30 @@
 # Alcance de esta publicación
 
-## Estado: preparada, publicación bloqueada
+## Estado: código publicado; Pages pendiente
 
 El repositorio de destino autorizado es
 https://github.com/Gibrantrm/Gibran-Hermes-Flow.git y estaba público y vacío.
 Se preparó esta copia en una rama `main` nueva, sin importar historial ajeno.
-El primer `git push -u origin main` falló antes de publicar:
-`Cannot prompt because user interactivity has been disabled` /
-`unable to get password from user`.
+Tras autenticar el propietario mediante Git Credential Manager, el push normal
+publicó `main`; el hash remoto coincidió con el local. Se verificó HTTP 200 para
+la imagen PNG enlazada desde el README. Las fuentes del diagrama fijadas al
+commit `b705aa7d5d83cbccff9c5ef3f3f889d0a1fe7b5d` ya están disponibles en GitHub.
+No se extrajeron tokens ni se modificó la configuración global de Git.
 
-No había autenticación Git utilizable de forma no interactiva. No se extrajeron
-tokens ni se intentó rodear el bloqueo. **Los commits siguen solo en el clon
-local; Pages no se desplegó y los enlaces de evidencia a esos commits no están
-disponibles en GitHub todavía.** El propietario debe configurar autenticación
-Git para GitHub y repetir el push normal desde este clon de publicación.
-Después hay que comprobar el resultado de Actions y la URL de Pages antes
-de anunciarla como disponible.
+**El sitio Pages todavía no se desplegó.** El
+[primer workflow](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44936048690)
+falló al intentar crear el sitio:
+`Create Pages site failed. Error: Resource not accessible by integration`.
+El token limitado de Actions no pudo habilitarlo; no se amplían permisos ni se
+cambia la visibilidad del repositorio para rodearlo.
+
+Paso mínimo del propietario:
+1. Abrir **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+2. En **Actions → Publicar diagrama en Pages**, usar **Run workflow** sobre `main`.
+3. Comprobar que el despliegue termine correctamente y abrir la URL que publique.
+
+Mientras tanto, el README renderiza el PNG y permite abrir el SVG o descargar el
+HTML autocontenido. No se anuncia una URL Pages como operativa.
 
 ## Qué contiene
 

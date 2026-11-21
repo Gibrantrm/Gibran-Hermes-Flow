@@ -15,11 +15,13 @@ El diagrama no sustituye la configuración del runtime ni garantiza aislamiento.
 
 ## GitHub y Pages
 
-**Estado de entrega:** publicación pendiente por autenticación Git. El push
-falló sin poder solicitar credenciales en modo no interactivo; no se ejecutó
-el workflow y no hay una URL Pages verificada. El HTML y las imágenes sí
-quedaron generados y verificados localmente. Los links de fuentes al commit
-fijado funcionarán después de publicar los commits.
+**Estado de entrega:** código, HTML, JSON y previews publicados en GitHub.
+Las fuentes enlazadas al commit fijado ya están disponibles. **Pages pendiente:**
+el [workflow inicial](https://github.com/Gibrantrm/Gibran-Hermes-Flow/actions/runs/44936048690)
+falló con `Resource not accessible by integration` al crear el sitio.
+No hay una URL Pages verificada. El propietario debe seleccionar
+**Settings → Pages → Build and deployment → Source → GitHub Actions**
+y ejecutar de nuevo el workflow desde Actions. Hasta entonces, descarga el HTML.
 
 GitHub muestra imágenes SVG/PNG en Markdown, pero no ejecuta el JavaScript de
 Archify dentro del README. El archivo HTML en la vista de código tampoco es
