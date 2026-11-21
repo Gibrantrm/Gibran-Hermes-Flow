@@ -1,5 +1,22 @@
 # Alcance de esta publicación
 
+## Estado: preparada, publicación bloqueada
+
+El repositorio de destino autorizado es
+https://github.com/Gibrantrm/Gibran-Hermes-Flow.git y estaba público y vacío.
+Se preparó esta copia en una rama `main` nueva, sin importar historial ajeno.
+El primer `git push -u origin main` falló antes de publicar:
+`Cannot prompt because user interactivity has been disabled` /
+`unable to get password from user`.
+
+No había autenticación Git utilizable de forma no interactiva. No se extrajeron
+tokens ni se intentó rodear el bloqueo. **Los commits siguen solo en el clon
+local; Pages no se desplegó y los enlaces de evidencia a esos commits no están
+disponibles en GitHub todavía.** El propietario debe configurar autenticación
+Git para GitHub y repetir el push normal desde este clon de publicación.
+Después hay que comprobar el resultado de Actions y la URL de Pages antes
+de anunciarla como disponible.
+
 ## Qué contiene
 
 Copia actual del flujo, sin importar historial del repositorio de trabajo.

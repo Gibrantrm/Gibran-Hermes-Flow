@@ -11,6 +11,10 @@ hooks y perfiles deben existir en tu versión: esto no promete compatibilidad co
 cualquier versión anterior o futura. La distribución pública conserva la lógica
 actual del flujo, con ejemplos y material operativo sanitizados.
 
+> **Estado de esta entrega:** copia preparada y verificada, pero el push quedó
+> bloqueado por falta de autenticación Git no interactiva. No se ha desplegado
+> Pages. Detalles y cómo continuar en [PUBLICACION.md](PUBLICACION.md).
+
 ## Diagrama del flujo
 
 [![Gibran Flow: del pedido al diff aprobado](docs/diagrama/gibran-flow.png)](docs/diagrama/gibran-flow.svg)

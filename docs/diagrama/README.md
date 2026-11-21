@@ -15,6 +15,12 @@ El diagrama no sustituye la configuración del runtime ni garantiza aislamiento.
 
 ## GitHub y Pages
 
+**Estado de entrega:** publicación pendiente por autenticación Git. El push
+falló sin poder solicitar credenciales en modo no interactivo; no se ejecutó
+el workflow y no hay una URL Pages verificada. El HTML y las imágenes sí
+quedaron generados y verificados localmente. Los links de fuentes al commit
+fijado funcionarán después de publicar los commits.
+
 GitHub muestra imágenes SVG/PNG en Markdown, pero no ejecuta el JavaScript de
 Archify dentro del README. El archivo HTML en la vista de código tampoco es
 una sesión del visor. GitHub Pages sí puede servir HTML/CSS/JS estáticos.
