@@ -1,0 +1,3 @@
+# Copia como workspace.yaml y sustituye raices por tus carpetas locales.
+# El archivo personal está ignorado por git; no publiques rutas de tu equipo.
+raices: []

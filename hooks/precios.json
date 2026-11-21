@@ -1,0 +1,49 @@
+{
+  "_nota": "USD por millón de tokens. Anthropic: tabla oficial de la API. Copilot cobra 1 AIC = 0.01 USD a la misma tarifa (github/docs data/tables/copilot/models-and-pricing.yml). Actualiza tipo_cambio_mxn y precios a mano.",
+  "tipo_cambio_mxn": 18.65,
+  "tipo_cambio_fecha": "2026-10-28",
+  "ttl_1h": [
+    "default"
+  ],
+  "modelos": {
+    "claude-opus-5-5": {
+      "entrada": 4.0,
+      "cache_lee": 0.2,
+      "cache_escribe": 5.0,
+      "salida": 20.0
+    },
+    "claude-sonnet-5-5": {
+      "entrada": 2.0,
+      "cache_lee": 0.2,
+      "cache_escribe": 2.5,
+      "salida": 10.0
+    },
+    "claude-sonnet-5": {
+      "entrada": 2.0,
+      "cache_lee": 0.2,
+      "cache_escribe": 2.5,
+      "salida": 10.0
+    },
+    "claude-sonnet-4-6": {
+      "entrada": 3.0,
+      "cache_lee": 0.3,
+      "cache_escribe": 3.75,
+      "salida": 15.0
+    },
+    "claude-haiku-5-5": {
+      "entrada": 0.1,
+      "cache_lee": 0.01,
+      "cache_escribe": 0.125,
+      "salida": 0.5,
+      "umbral_largo": 100000,
+      "factor_largo": 5
+    },
+    "gpt-6-1-sol": {
+      "entrada": 2.0,
+      "cache_lee": 0.15,
+      "cache_escribe": 2.0,
+      "salida": 10.0
+    }
+  },
+  "_nota_gpt-6-1-sol": "Tarifas orientativas conservadas de la configuración del flujo; cache_lee es una estimación. Revalidar precios y tipo de cambio antes de interpretar costos. No es una factura."
+}
