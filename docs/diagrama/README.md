@@ -49,6 +49,14 @@ no se puede determinar solo con estos logs. El warning de `punycode` no fue
 el error que detuvo el despliegue. Se verifica una ejecución nueva desde `main`
 sin cambiar versiones, permisos, bytes del diagrama ni pasos del workflow.
 
+La ejecución nueva `44943224309` reprodujo el mismo fallo: upload finalizado
+con ID `14722353100`, seguido de cero resultados al desplegar en el mismo job.
+Se separan ahora preparación y despliegue con `needs: preparar`, como recomienda
+[deploy-pages](https://github.com/actions/deploy-pages/tree/v4#usage):
+el despliegue comienza después de finalizar correctamente el job que subió el
+artefacto. Se conserva la lista de archivos, nombres y versiones de actions;
+no se añaden permisos, esperas fijas ni reintentos que oculten fallos.
+
 Documentación oficial:
 - [Qué es GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
 - [Diagramas nativos en GitHub](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams).
