@@ -18,6 +18,9 @@ PY = Path(sys.executable).as_posix()
 def evaluar(payload):
     entrada = payload.get("tool_input")
     texto = textos(entrada)
+    if re.search(r"(?i)\bdotnet_seguro\.py\b", texto) and re.search(r"\bautorizar-test\b", texto):
+        return bloquear("Gibran Flow: el worker no autoriza sus propios tests. "
+                        "Solicita al orquestador el proyecto/filtro/opciones necesarios.")
     plano = re.sub(r"[\"'\[\],]", " ", texto)
     m = COMPILA.search(texto) or COMPILA.search(plano)
     if not m:

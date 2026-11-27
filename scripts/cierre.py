@@ -1,4 +1,4 @@
-"""Cierre de una tarea (paso 12 de modo-feature / §6 de modo-bug): lo mecánico del Control final.
+"""Cierre de una tarea (paso 12 de modo-feature / §4 de modo-bug): lo mecánico del Control final.
 
 Uso (el orquestador, antes de presentar el Control final):
   python cierre.py --worktree <ruta> --rama <rama> --modo feature --riesgo ALTO --e2e "arnés"
@@ -10,6 +10,7 @@ con las rutas reales. Su salida se pega tal cual en la sección "Cierre".
 """
 import argparse
 import datetime
+import hashlib
 import json
 import os
 import sqlite3
@@ -32,7 +33,7 @@ def normal(ruta):
 
 
 def kanban(db, worktree):
-    """(tarjetas, revisiones, sin_revisor, primera_creacion) de las tarjetas de ese worktree."""
+    """(tarjetas, revisiones, sin_revisor, primera_creacion, id_inicial) del worktree."""
     c = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     tareas = [(i, s, t) for i, s, w, t in c.execute("select id, status, workspace_path, created_at from tasks")
               if w and normal(w) == normal(worktree)]
@@ -44,8 +45,8 @@ def kanban(db, worktree):
         if estado in ("done", "archived") and "completed" not in runs:
             sin_revisor.append(tid)
     c.close()
-    primera = min((t for _, _, t in tareas), default=None)
-    return len(tareas), revisiones, sin_revisor, primera
+    inicial = min(tareas, key=lambda t: (t[2], t[0])) if tareas else None
+    return len(tareas), revisiones, sin_revisor, inicial[2] if inicial else None, inicial[0] if inicial else None
 
 
 def costo(primera):
@@ -83,6 +84,33 @@ def repo_principal(worktree):
     return Path(r.stdout.strip()).parent if r.returncode == 0 and r.stdout.strip() else None
 
 
+def registrar_metrica(metricas, id_inicial, fila):
+    """Actualiza por tarjeta inicial, conservando fecha y defectos de la primera fila."""
+    marca = f"<!-- cierre:{hashlib.sha256(id_inicial.encode('utf-8')).hexdigest()} -->"
+    previas = metricas.read_text(encoding="utf-8") if metricas.exists() else ""
+    lineas = previas.splitlines(keepends=True)
+    coincidencias = [i for i, linea in enumerate(lineas) if linea.rstrip().endswith(marca)]
+    if len(coincidencias) > 1:
+        raise ValueError("hay varias filas con la misma identidad de cierre; revisa las métricas")
+    if coincidencias:
+        i = coincidencias[0]
+        anterior = lineas[i].rstrip().removesuffix(marca).rstrip().split("|")
+        nueva = fila.split("|")
+        if len(anterior) != len(nueva) or anterior[0].strip() or anterior[-1].strip():
+            raise ValueError("la fila de esta tarea tiene un formato inválido; revisa las métricas")
+        nueva[1], nueva[-2] = anterior[1], anterior[-2]
+        lineas[i] = "|".join(nueva) + " " + marca + "\n"
+        contenido = "".join(lineas)
+        accion = "actualizada"
+    else:
+        separador = "\n" if previas and not previas.endswith("\n") else ""
+        contenido = previas + separador + fila + " " + marca + "\n"
+        accion = "agregada"
+    if contenido != previas:
+        metricas.write_text(contenido, encoding="utf-8")
+    return accion
+
+
 def main(argv, kanban_db=None, metricas=None):
     p = argparse.ArgumentParser(prog="cierre")
     p.add_argument("--worktree", required=True)
@@ -96,13 +124,20 @@ def main(argv, kanban_db=None, metricas=None):
     repo = repo_principal(a.worktree)
     nombre = repo.name if repo else Path(a.worktree).name
 
-    tarjetas, revisiones, sin_revisor, primera = kanban(db, a.worktree)
+    tarjetas, revisiones, sin_revisor, primera, id_inicial = kanban(db, a.worktree)
+    if id_inicial is None:
+        print("## Cierre")
+        print("- ALERTA: no hay tarjetas del worktree; no se puede identificar la tarea ni registrar su métrica.")
+        return 1
     texto_costo, detalle_costo = costo(primera)
     fila = (f"| {datetime.date.today().isoformat()} | {nombre} | {a.modo} | {a.riesgo} | {tarjetas} | "
             f"{revisiones} | {a.e2e} | {texto_costo} | pendiente |")
-    previas = metricas.read_text(encoding="utf-8") if metricas.exists() else ""
-    if fila not in previas:
-        metricas.write_text(previas.rstrip("\n") + "\n" + fila + "\n", encoding="utf-8")
+    try:
+        accion_metrica = registrar_metrica(metricas, id_inicial, fila)
+    except ValueError as e:
+        print("## Cierre")
+        print(f"- ALERTA: {e}. No se modificaron las métricas.")
+        return 1
 
     print("## Cierre")
     print(f"- Tarjetas: {tarjetas} · revisiones del revisor: {revisiones}")
@@ -112,7 +147,7 @@ def main(argv, kanban_db=None, metricas=None):
     apps = [x for x in apps_de(a.worktree) if vivo(x["pid"])] if Path(a.worktree).is_dir() else []
     print(f"- ALERTA: siguen corriendo apps (PID {[x['pid'] for x in apps]}): corre app_local.py detener"
           if apps else "- Apps de la tarea: ninguna corriendo")
-    print(f"- Métrica: fila agregada en {metricas}")
+    print(f"- Métrica: fila {accion_metrica} en {metricas}")
     print("\nAl aprobar el Control final, el orquestador integra (cambios staged en la rama de origen, sin commit;")
     print("borra el worktree y la rama). Después el usuario revisa `git diff --cached` y hace el commit:")
     print(f'    python "{RAIZ / "scripts" / "integrar.py"}" --worktree "{a.worktree}" --rama {a.rama}')

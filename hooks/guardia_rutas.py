@@ -1,5 +1,6 @@
 """pre_tool_call (write_file|patch|skill_manage|tool_call): nadie escribe en hermes-flow; con
 --solo-lectura (revisor) tampoco en un repo git (el worktree que revisa)."""
+import os
 import re
 import sys
 from pathlib import Path
@@ -12,7 +13,7 @@ HERMES_FLOW = Path(__file__).resolve().parents[1]
 PERMITIDOS = {HERMES_FLOW / "propuestas-de-mejora.md", HERMES_FLOW / "metricas" / "correcciones.md",
               HERMES_FLOW / "metricas" / "tareas.md"}
 ESCRITURA = {"write_file", "patch", "skill_manage"}
-ARCHIVO_V4A = re.compile(r"^\*\*\* (?:Update|Add|Delete) File: (.+)$", re.M)
+ARCHIVO_V4A = re.compile(r"^\*\*\* (?:(?:Update|Add|Delete) File|Move to): (.+)$", re.M)
 MENSAJE_FLOW = ("Gibran Flow: nadie escribe en hermes-flow (skills, souls, hooks). Si aprendiste algo "
                 "para el flujo, anótalo en tu entrega como propuesta; si es del repo, va en su .hermes.md.")
 MENSAJE_REVISOR = ("Gibran Flow: el revisor no modifica el código que revisa. Lee, compila y corre "
@@ -46,6 +47,10 @@ def evaluar(payload, solo_lectura=False):
         if nombre not in ESCRITURA:
             continue
         for ruta in rutas(nombre, args):
+            local = os.environ.get("LOCALAPPDATA")
+            if local and dentro(ruta, (Path(local) / "hermes" / "gibran-tests").resolve()):
+                return bloquear("Gibran Flow: no edites autorizaciones ni evidencia de tests. "
+                                "El orquestador registra el alcance con dotnet_seguro.py autorizar-test.")
             if dentro(ruta, HERMES_FLOW) and ruta.resolve() not in PERMITIDOS:
                 return bloquear(MENSAJE_FLOW)
             if solo_lectura and nombre != "skill_manage" and en_repo_git(ruta):

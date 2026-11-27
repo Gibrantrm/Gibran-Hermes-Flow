@@ -29,8 +29,10 @@ metadata:
   contexto) y tu test falla por eso: primero busca tests o código del repo que ya la usen y copia
   cómo lo resuelven. Solo si no hay ninguno, revisa la librería, lo justo. Si sigue sin salir,
   `kanban_block` temprano diciendo qué falta y qué propones, en vez de seguir probando.
-- **Línea base:** compila y corre los tests del proyecto afectado ANTES de tocar nada. Anota qué
-  falla ya: no te atribuyas fallos previos ni los escondas.
+- **Línea base:** compila y corre SOLO la selección de tests autorizada en la tarjeta ANTES
+  de tocar nada; no la suite del proyecto. En .NET usa `dotnet_seguro.py test --tarea <id>`
+  como indica `stack-dotnet`. Si falta autorización o necesitas otro filtro, `kanban_block`
+  con el comando necesario; no te autorices ni busques otro ejecutor. Anota lo que falla ya.
 
 ## 1. Ciclo TDD (un criterio a la vez)
 1. **RED:** un test por criterio, estructura preparar-actuar-verificar, nombre que describe la
@@ -43,7 +45,9 @@ metadata:
    confirma que el test vuelve a fallar; si sigue verde, el test no prueba nada. Restáurala y
    confirma con `git diff` que quedó igual. Va en la entrega (el revisor no muta: la verifica).
 4. **Limpieza** solo dentro de tus archivos y con todo en verde.
-5. Suite del proyecto: mismos fallos que la línea base, ni uno más.
+5. Misma selección autorizada que en la línea base: mismos fallos, ni uno más.
+   En TDD reutiliza el filtro autorizado (p. ej. de clase); cambiarlo requiere registro del
+   orquestador. Ni la línea base ni una regresión justifican ampliar el alcance.
 
 **Criterio "en navegador" con E2E en la tarjeta** (reglas en `modo-feature/references/e2e.md`):
 el mismo ciclo, contra la app levantada. RED: escribe la prueba E2E y córrela con la app SIN tu
@@ -98,7 +102,8 @@ Lo mismo que el revisor bloquearía; arréglalo tú y ahorra una ronda.
 - [ ] Compila sin errores y sin warnings nuevos de las familias que indica el módulo.
 - [ ] Cada criterio tiene su test, visto en RED (por aserción) y luego en GREEN; los "en
       navegador", su prueba E2E. App detenida y puerto libre.
-- [ ] Suite = línea base. Formateador del repo sin cambios pendientes, si existe.
+- [ ] Selección autorizada = línea base; entrega comando, código de salida y ruta de evidencia
+      completa. Formateador del repo sin cambios pendientes, si existe.
 - [ ] **Propagación:** si agregaste un campo o regla, llega a todos sus caminos (modelo →
       persistencia → DTO → mapeo/proyección → validación → creación Y actualización →
       consumidores). Si corregiste un bug, el arreglo está en la función compartida y revisaste

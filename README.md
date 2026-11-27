@@ -15,6 +15,10 @@ actual del flujo, con ejemplos y material operativo sanitizados.
 > El README muestra una imagen; al pulsarla se abre el visor completo.
 > [Detalles de publicación](PUBLICACION.md).
 
+**Actualización 26-nov-2026:** incorpora las correcciones **H1–H5**.
+[Estado, operación de tests autorizados y límites](docs/analisis/correcciones-astra-h1-h5.md).
+La adaptación MAUI/Maestro sigue siendo una propuesta, no una capacidad implementada.
+
 ## Diagrama del flujo
 
 [![Gibran Flow: del pedido al diff aprobado](docs/diagrama/gibran-flow.png)](https://gibrantrm.github.io/Gibran-Hermes-Flow/)
@@ -128,7 +132,8 @@ La entrada es una petición normal de desarrollo al orquestador. Su SOUL carga
 - **Bug:** exploración y diagnóstico con hipótesis verificables. Debe existir un
   comando rojo; en lógica determinista la causa puede documentarse primero por
   lectura y la tarjeta exige que el implementador produzca el rojo. Luego usa el
-  mismo motor de feature y demuestra verde con el comando original.
+  mismo motor de feature, reutiliza el worktree de diagnóstico y demuestra verde con
+  el comando original. Pendientes, escriba y Control final se ejecutan una sola vez.
 - **Nuevo:** siempre ALTO. Mini-PRD y **Control 0**, elección de base/stack, plan de
   un walking skeleton y Control 1. El primer commit vacío lo hace el usuario.
 
@@ -161,6 +166,8 @@ El orquestador crea tarjetas con `kanban_create`: asignado `implementador`,
 `workspace_kind: "dir"`, worktree explícito, criterios/archivos/pruebas en el body,
 dependencias en `parents` y `max_runtime_seconds: 2700`. La TUI recibe avisos de
 tarjetas suscritas; no se debe inventar su estado a partir de que ya pasó tiempo.
+Las tarjetas con tests .NET se crean con `initial_status: "blocked"`: el orquestador
+registra todos sus comandos autorizados y solo entonces llama a `kanban_unblock`.
 
 **El despachador vive en el gateway: debe estar running.** Si una tarjeta sigue
 `ready` unos dos minutos, consulta primero:
@@ -183,15 +190,19 @@ no pide una cuarta. Las tarjetas comparten el worktree; revisiones sobre archivo
 que cambiaron en paralelo pueden bloquearse legítimamente.
 
 Las pruebas se autorizan por tarea: especifica comando, filtro, ambiente y
-efectos permitidos. **El texto de una tarjeta por sí solo no impide ejecutar
-una suite completa**: el implementador también tiene instrucciones de línea
-base/suite del proyecto. Las guardias no limitan todos los comandos ni efectos
-laterales de un test. Cero tests encontrados no es éxito.
+efectos permitidos. **H5 registra proyecto/filtro/opciones fuera del worktree** y
+`dotnet_seguro.py test --tarea <id>` rechaza comandos no registrados, sin filtro
+o con tarea/worktree distintos. Baseline, TDD, QA y cierre usan esa misma selección,
+no una suite completa. Los workers no se autorizan mediante el registrador normal.
+El registro conserva comando, salida completa y código de salida por corrida.
+Cero tests encontrados no es éxito.
 
 En .NET, `scripts/dotnet_seguro.py` serializa compilaciones del worktree compartido;
 no convierte pruebas con escrituras en pruebas de solo lectura. Las E2E usan el
 filtro de la tarjeta y el acumulado de la feature, no toda la categoría E2E.
 Sin arnés, el plan crea tarjeta de verificación en navegador para el revisor.
+Estas guardias no son un sandbox: una terminal arbitraria o los efectos del propio
+test requieren controles adicionales. Maestro no está cubierto por la autorización .NET.
 
 ## Apps locales y `--tarea`
 
@@ -232,7 +243,9 @@ no verificables, con motivo concreto. Después el escriba deja una nota en
 distinguiendo hechos de supuestos.
 
 `cierre.py` lee Kanban en solo lectura, cuenta tarjetas/revisiones, calcula
-equivalentes, agrega una fila local de métricas y reporta apps registradas vivas.
+equivalentes, agrega o actualiza la fila de la tarea por identidad de su primera
+tarjeta y reporta apps registradas vivas. Conserva fecha y defectos; ante identidad
+ausente, duplicada o fila inválida alerta sin escribir.
 **Escribe archivos de métricas:** no es un comando de inspección sin efectos.
 
 ```powershell
@@ -275,7 +288,8 @@ conflictos; lee la salida y no lo rodees. **No hace commit ni push.**
 
 ## Prueba acotada de la copia pública
 
-Se incluye `tests/test_app_local.py` (12 casos). Levanta únicamente servidores de
+Se incluyen las regresiones focalizadas H1, H3, H4 y H5; H2 es un cambio de instrucciones.
+`tests/test_app_local.py` (12 casos) levanta únicamente servidores de
 prueba loopback, con registro/rango propios; no ejecuta Hermes workers ni apps de
 negocio. El runner público simula **únicamente la conexión a Kanban** como un
 tablero vacío; no abre ni escribe una base real. Los casos de concurrencia fijan
@@ -283,14 +297,24 @@ sus propios estados. Usa el Python de Hermes:
 
 ```powershell
 & $python -B .\tests\run_app_local.py
+
+# Resto de regresiones, sin fixtures con commits o escrituras SQLite.
+$pythonBase = & $python -c "import sys; print(sys._base_executable)"
+Push-Location .\tests
+try {
+    & $pythonBase -B -m unittest test_cierre test_guardia_revision test_dotnet_seguro test_guardia_build test_guardia_rutas -v
+} finally {
+    Pop-Location
+}
 ```
 
 No uses `unittest discover` general para reproducir esta publicación: otras
 fixtures del entorno de desarrollo realizan operaciones adicionales y no se
-incluyen en esta copia. Los archivos de prueba quedan bajo `.verification/`,
-ignorado por Git. Ejecutar directamente `test_app_local.py` sin Kanban puede
+incluyen en esta copia. El runner de `app_local` deja sus artefactos bajo `.verification/`,
+ignorado por Git; los otros módulos usan temporales propios. Ejecutar directamente `test_app_local.py` sin Kanban puede
 fallar: la protección conservadora mantiene apps sin dueño ante una BD ilegible.
-Que estos 12 casos pasen no certifica todo el flujo ni la integración real con Kanban.
+Los otros módulos usan ejecutables falsos, snapshots y respuestas de BD simuladas.
+Que estos casos pasen no certifica todo el flujo ni la integración real con Kanban.
 
 ## Alcance público y licencias
 

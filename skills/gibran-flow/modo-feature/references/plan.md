@@ -47,6 +47,10 @@
        líneas"; un conteo o posición exactos solo si el usuario lo pidió así)
     (criterio que se ve en pantalla: termina en "— en navegador")
     Test: <clase/archivo de test y comando que lo corre>
+    Alcance .NET: <comandos exactos desde la raíz del worktree: .csproj + --filter + opciones;
+        baseline/TDD y QA usan estas selecciones, NO la suite entera; no aplica si no es .NET
+        o si hay "Sin test" aprobado>. El orquestador registra cada comando por id antes del
+        despacho; el worker usa `dotnet_seguro.py test --tarea <id>` y no se autoriza a sí mismo.
     E2E: <archivo y filtro de la tarjeta> + <filtro acumulado de la feature> (si hay arnés;
         filtros por NOMBRE de las pruebas de esta feature, p. ej. `FullyQualifiedName~TooltipVacio`
         o el archivo `tests/evento-estado-vacio.spec.ts`; nunca una categoría entera como
@@ -98,6 +102,8 @@ cada repo y en qué orden. Cada repo tiene su propio worktree.
 - ¿Algún criterio de forma (número de líneas, palabras, posición exacta) que el usuario no pidió?
   El revisor lo exige al pie de la letra y gasta rondas en eso: cámbialo por lo que debe decir.
 - ¿Alguna sin test y sin "Sin test" aprobado?
+- ¿Algún test .NET sin proyecto/filtro/opciones concretos, o baseline/QA más amplia que lo
+  permitido? ¿Falta registrar alguna selección acumulada de E2E prevista?
 - ¿Hay tarjetas separadas sin una de las razones del punto 2 (p. ej. el mismo patrón repartido
   en varias tarjetas)? Únelas.
 - ¿Alguna tarjeta que no se pueda probar sin otra (partida por capa)? Únelas.

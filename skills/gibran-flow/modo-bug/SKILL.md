@@ -30,8 +30,14 @@ una feature) → `necesita-decisión` al usuario.
 Los hijos de `delegate_task` corren con un modelo barato; el diagnóstico es la parte difícil y
 lo haces tú. Crea el worktree: `git -C <repo> worktree add ../<repo>.wt-<slug> -b bugfix/<slug>`
 y sigue `skill_view("modo-bug", "references/diagnostico.md")` en ese worktree (rutas
-absolutas). No corrijas. Para no llenar tu contexto: corre solo el test que importa y recorta
-salidas largas (`| tail -40`, `grep`). El camino depende de la clasificación del explorador:
+absolutas). No corrijas. Para no llenar tu contexto: corre solo el test que importa; puedes
+recortar la consola, no perder la evidencia completa.
+**Tests .NET antes de tener tarjeta:** acuerda primero proyecto/filtro/opciones con el usuario.
+Registra el comando con `dotnet_seguro.py autorizar-test` (ver `stack-dotnet`) usando
+`--tarea diag-<identificador-único>` y el worktree del diagnóstico; ejecútalo con
+`dotnet_seguro.py test --tarea diag-<identificador-único>`. El runner conserva el log aunque
+recortes la consola. Al crear la tarjeta, registra otra vez bajo su id real: no hereda ese permiso.
+El camino depende de la clasificación del explorador:
 - **Lógica determinista** (el defecto se ve en el código: una condición al revés, un campo que no
   llega a la proyección, un caso sin manejar): puedes hallar la causa leyendo y comparando con el
   ejemplo que funciona. Dila como "causa por lectura (archivo:línea), sin rojo aún"; el rojo lo
@@ -62,8 +68,12 @@ Con la causa confirmada, aplica `dev-flow/references/riesgo.md` (solo puede subi
 Si el arreglo cambia un contrato (endpoint, DTO, esquema), dilo en negritas.
 
 ## 4. Corregir con el motor de modo-feature
-Sigue `modo-feature` paso 3 (Kanban con QA y revisor; el riesgo decide plan y Control 1).
-Diferencias:
+Sigue una sola vez `modo-feature` §3, subpasos 1–12 (Kanban con QA y revisor; el riesgo
+decide plan y Control 1), con estas adaptaciones:
+- **Worktree:** reutiliza el que creaste en el diagnóstico (§2), con su rama `bugfix/<slug>`.
+  Omite la creación del subpaso 5; no crees otro worktree ni una rama `feature/<slug>`.
+  Las tarjetas y la verificación usan ese mismo worktree. Conserva entrevista, plan y
+  Control 1 según el riesgo: tener el worktree creado no sustituye la aprobación.
 - Rojo: si ya lo viste, en la tarjeta va "RED ya visto: `<comando>` — <salida>" y el
   implementador lo confirma. Si la causa fue por lectura, va "RED pendiente: <síntoma que el
   test debe afirmar>" y el implementador lo escribe primero; si no se pone rojo, la causa era
@@ -76,11 +86,14 @@ Diferencias:
 - Si no hubo una costura correcta para el test (ver diagnostico.md, fase 5), va a PENDIENTE como
   hallazgo de arquitectura y el usuario lo acepta en el Control 1 o el Control final.
 
-## 5. Escriba
-`delegate_task` con skill `agente-escriba`. La nota lleva: categoría, causa raíz, hipótesis
-descartadas, llamadores revisados y test agregado. Si la trampa puede repetirse en el repo,
-propónla como regla del `.hermes.md`.
-
-## 6. Pendientes y Control final
-Como en modo-feature (pasos 10, 11 y 12: pendientes, escriba y Control final con la plantilla `modo-feature/references/control-final.md` y `scripts/cierre.py --modo bug`): vuelve a correr el comando rojo original (sin
-minimizar) y muestra que ahora pasa.
+- **Verificación (subpaso 9):** vuelve a correr el comando rojo original (sin minimizar) y
+  muestra que ahora pasa, además de las verificaciones de modo-feature. En .NET conserva
+  proyecto/filtro/opciones, pero usa el runner con el id real de la tarjeta y su autorización.
+- **Cierre único (subpasos 10–12):** pendientes → escriba → Control final. No ejecutes
+  otra secuencia de cierre al terminar modo-feature.
+  - En el encargo al escriba del subpaso 11, añade categoría, causa raíz, hipótesis descartadas,
+    llamadores revisados y test agregado. Si la trampa puede repetirse en el repo, propónla
+    como regla del `.hermes.md`.
+  - En el subpaso 12 usa `modo-feature/references/control-final.md` y ejecuta
+    `scripts/cierre.py --modo bug` con el worktree y la rama del diagnóstico y los demás
+    argumentos requeridos. Solo integra cuando el usuario apruebe el Control final.

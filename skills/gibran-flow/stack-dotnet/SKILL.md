@@ -20,12 +20,35 @@ Hay `*.sln` o `*.csproj`. El `TargetFramework` de cada `.csproj` fija qué APIs 
 
 ## Compilar y probar
 - Build del proyecto afectado: `dotnet build <proyecto>.csproj --nologo -v q`.
-- Tests: `dotnet test <proyecto-de-tests>.csproj --nologo` (no toda la solución si es lenta);
-  para iterar: `--filter "FullyQualifiedName~<Clase>"`.
-- **En workers de Kanban** (worktree compartido) escribe `dotnet build/test/run/publish`
+- Tests, desde la raíz del worktree: `python
+  "${HERMES_SKILL_DIR}\..\..\..\scripts\dotnet_seguro.py" test --tarea <id-tarjeta>
+  <proyecto-de-tests>.csproj --filter "<filtro-autorizado>" --nologo`.
+  Copia proyecto, filtro y opciones del comando registrado, incluido su orden. Usa el id de
+  tu tarjeta, también en QA; `--tarea` suple la variable que puede faltar en la terminal.
+- **En workers de Kanban** (worktree compartido) escribe `dotnet build/run/publish`
   normal en la terminal: la guardia lo pasa sola por el candado (`dotnet_seguro`), que además
-  quita avisos repetidos de la salida. No busques el script ni la ruta de Python.
+  quita avisos repetidos de la salida. `dotnet test` también se redirige, pero no evita la
+  autorización: para tests usa el comando explícito anterior.
   Código de salida 75 = el candado siguió ocupado 15 min (problema de entorno, no del código).
+  Código 2 = alcance ausente/inválido: bloquea la tarjeta, no cambies de ejecutor.
+
+**Alcance de tests:** el orquestador registra cada comando aprobado con `dotnet_seguro.py
+autorizar-test --tarea <id> --worktree "<worktree>" -- <proyecto>.csproj --filter "<filtro>"
+<opciones-aprobadas>`, antes de despachar. Se admiten un `.csproj` dentro del worktree y un
+`--filter` no vacío; opciones: `--nologo`, `--no-build`, `--no-restore`, `-c/--configuration`,
+`-f/--framework`, `-v/--verbosity`, `-l/--logger` (las últimas cuatro con valor).
+No se admiten soluciones, filtros repetidos, `.rsp`, propiedades MSBuild, `--settings` ni
+argumentos tras `--`. No correr sin filtro. Para otra selección, el orquestador registra otro
+comando, tras resolver con el usuario cualquier ampliación de lo aprobado. No hay autorización
+implícita por ser baseline, TDD, regresión o cierre; tampoco se hereda de otra tarjeta.
+
+Registro local fuera del repo: `%LOCALAPPDATA%\hermes\gibran-tests`. Cada ejecución conserva
+comando, tarjeta, worktree, fechas, código de salida y stdout/stderr completos (`.json` + `.log`
+en `ejecuciones`), antes de resumir la consola. Lee el log ante fallos y cita su ruta; no lo
+edites ni lo publiques (puede contener datos sensibles). Si no puede guardar evidencia, no
+lanza tests. Un código nulo no prueba éxito: ejecución interrumpida o no iniciada.
+Esto controla comandos del flujo, NO aísla los tests ni vuelve la BD de solo lectura.
+Revisa sus efectos y respeta los permisos de datos aunque el filtro esté autorizado.
 
 **Pruebas E2E** (si el repo trae guía, `CLAUDE.md` o `docs/…e2e…`, esa manda):
 1. Si cambió el esquema o datos que siembra el updater (XAF/XPO): corre antes el comando de
@@ -36,9 +59,10 @@ Hay `*.sln` o `*.csproj`. El `TargetFramework` de cada `.csproj` fija qué APIs 
    --env ASPNETCORE_ENVIRONMENT=Development -- dotnet {copia}/<Ensamblado>.dll --urls
    https://localhost:{puerto} --contentRoot <proyecto web>` (verificado con una app XAF/Blazor:
    estáticos y páginas responden desde la copia).
-4. `dotnet test <proyecto-de-tests> --no-build --filter "Category=E2E&FullyQualifiedName~<Clase>"`
+4. `python "${HERMES_SKILL_DIR}\..\..\..\scripts\dotnet_seguro.py" test --tarea <id-tarjeta>
+   <proyecto-de-tests>.csproj --no-build --filter "Category=E2E&FullyQualifiedName~<Clase>"`
    con `E2E_BASE_URL=https://localhost:<PUERTO>` (o la variable del arnés). `--no-build`: ya está
-   compilado y así no toca binarios.
+   compilado y así no toca binarios. Este comando exacto debe estar autorizado en la tarjeta.
 5. `python <app_local> detener`.
 `UseUrls(...)` en el código del host le gana a `--urls` y a `ASPNETCORE_URLS`: esa app queda en su
 puerto fijo (usa `--puerto <n>`).

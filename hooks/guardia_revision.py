@@ -6,8 +6,8 @@ worktree cambió (lo modificó el revisor, o su build regeneró archivos version
 pide reportarlo con kanban_block. No impide escribir; impide aprobar en silencio.
 
 Con tarjetas en paralelo en el mismo worktree (un implementador corriendo durante la revisión),
-los archivos que no estaban en la foto se atribuyen a esa tarjeta y no bloquean; los que sí
-estaban (lo que se revisa) bloquean siempre.
+también bloquea por archivos que no estaban en la foto: su autoría no se puede atribuir solo
+porque exista otra tarjeta. Las tarjetas paralelas se mencionan como contexto, no como exención.
 """
 import hashlib
 import json
@@ -97,8 +97,6 @@ def evaluar(payload):
         return {}
     cambiados = diferencias(guardada["archivos"], actual)
     otras = paralelas(guardada["cwd"], guardada.get("ts", 0)) if cambiados else []
-    if otras:  # lo nuevo fuera de la foto es de la tarjeta en paralelo
-        cambiados = [r for r in cambiados if r in guardada["archivos"]]
     if not cambiados:
         return {}
     lista = ", ".join(cambiados[:10]) + (f" y {len(cambiados) - 10} más" if len(cambiados) > 10 else "")

@@ -47,7 +47,9 @@ solo cuánto plan y cuántos controles (pasos 1-4); de ahí en adelante es igual
    hecha, el Control 1 es confirmar, no descubrir. Espera aprobación explícita.
    BAJO: muestra el plan breve y sigue sin esperar, salvo "Sin test" (siempre lo decide el
    usuario).
-5. Crea UN worktree para la feature (uno por repo si el cambio cruza repos):
+5. Si vienes de `modo-bug` con el worktree creado en el diagnóstico de esta tarea, reutiliza
+   ese worktree y su rama `bugfix/<slug>`; no ejecutes otro `worktree add`.
+   Para una feature, crea UN worktree (uno por repo si el cambio cruza repos):
    `git -C <repo> worktree add ../<repo>.wt-<slug> -b feature/<slug>`
 6. Crea las tarjetas tú mismo con la herramienta `kanban_create`, una llamada por tarjeta
    (guarda cada id para `parents`). Nunca dejes el comando en un archivo ni le pidas al usuario
@@ -59,6 +61,15 @@ solo cuánto plan y cuántos controles (pasos 1-4); de ahí en adelante es igual
    `parents: ["<id-previo>"]` si depende de otra. (Reintentos: el tope viene de
    `kanban.failure_limit` = 2 y cuenta **intentos totales**, no reintentos extra: el primero y
    uno más. Lo mismo `max_retries` si lo pones en una tarjeta: con 1 se rinde al primer fallo.)
+   **Tarjetas con tests .NET:** añade `initial_status: "blocked"` al crearlas. Con el id
+   devuelto registra CADA comando del plan (sin ejecutarlo):
+   `python "${HERMES_SKILL_DIR}\..\..\..\scripts\dotnet_seguro.py" autorizar-test
+   --tarea <id> --worktree "<worktree>" -- <proyecto>.csproj --filter "<filtro>" <opciones>`.
+   Incluye las selecciones de baseline/TDD, QA y E2E acumuladas previstas; ver `stack-dotnet`
+   § "Compilar y probar". Solo después de que TODOS los registros salgan con código 0,
+   `kanban_unblock` con `task_id: "<id>"` (respeta `parents`). Si falla el registro, la tarjeta
+   permanece bloqueada. Esto evita que el despachador arranque antes de tener autorización.
+   No registres comandos más amplios que el plan ni autorices suites enteras por costumbre.
    Precarga solo lo imprescindible: cada skill precargada entra completa en cada llamada del
    worker; el resto lo carga él si lo necesita.
    `kanban_create` te suscribe a la tarjeta (`subscribed: true`): en la TUI (`hermes --tui`)
@@ -98,7 +109,9 @@ solo cuánto plan y cuántos controles (pasos 1-4); de ahí en adelante es igual
 9. Cuando todas estén `done`: **primero lee el resumen del revisor** de cada tarjeta
    (`hermes kanban show <id>`): lo que ya verificó con evidencia (p. ej. el comportamiento
    de una clase de un NuGet) no lo repites ni lo reportas como "no revisado". Luego verifica
-   tú: build + tests en el worktree, diff completo contra los criterios del plan. Atiende
+   tú: build + selecciones de tests autorizadas en el worktree, diff completo contra los
+   criterios del plan. En .NET usa explícitamente `dotnet_seguro.py test --tarea <id>` con
+   cada comando registrado para esa tarjeta, también después de `done`; no una suite global. Atiende
    sus HALLAZGOS; no los ignores. Las pruebas en navegador NO las corres tú (quien dirige no
    revisa con ojos frescos): lees su resultado en el resumen del revisor. Sin arnés, la tarjeta
    final de verificación ya la creaste en el paso 6 (`references/plan.md`).
@@ -131,7 +144,9 @@ pendiente que el explorador verificó mal, tu propia verificación del paso 9) s
 - **De esta tarea** (no cumple un criterio aprobado o rompió algo) → no lo corriges tú: tarjeta
   de corrección con `kanban_create` (`assignee: "implementador"`, mismo worktree, `parents` = la
   tarjeta que lo causó, el hallazgo como criterio con su evidencia). Pasa por implementador y
-  revisor como cualquier otra. Si venía de la verificación en navegador, crea además una nueva
+  revisor como cualquier otra; si lleva tests .NET, créala bloqueada, registra su alcance y
+  desbloquea como en el paso 6 (no hereda la autorización de su padre).
+  Si venía de la verificación en navegador, crea además una nueva
   tarjeta de verificación con `parents` = la de corrección (la bloqueada queda como registro).
   Luego vuelve al paso 9.
 - **Ya existía o es de otro tema** → "Hallazgos abiertos" del Control final; decide el usuario si
